@@ -1,3 +1,3 @@
 class Controller:
     def home(self):
-        return 'hello'
+        return 'murr'

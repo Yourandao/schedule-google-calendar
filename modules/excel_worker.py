@@ -11,4 +11,4 @@ class ExcelWorker:
 
 worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
 
-worker.get_cell(7, 119)
+worker.get_cell(7, 119) # test
