@@ -9,7 +9,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 class GoogleProcessor:
-    def __init__(self, creds_path : str, client_name : str):
+    def __init__(self, client_name : str):
         self.__scopes = ['https://www.googleapis.com/auth/calendar.readonly','https://www.googleapis.com/auth/calendar']
         self.__creds  = None
         self.service  = None
@@ -38,7 +38,7 @@ class GoogleProcessor:
         all_doubles = 6 * 12
         worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
 
-        for i in range(EXCEL_HEADER_SCRAP, all_doubles + EXCEL_HEADER_SCRAP, 1):
+        for i in range(EXCEL_HEADER_SCRAP + 1, all_doubles + EXCEL_HEADER_SCRAP, 1):
             row = worker.get_row(i)
 
             for event in row:
@@ -46,7 +46,8 @@ class GoogleProcessor:
 
     def push_to_google_calendar(self, event : EventObject):
         start_time, end_time = event.time.split('-')
-
+        start = event.date.strftime('%Y-%m-%d') + "T" + start_time + ':00'
+        end = event.date.strftime('%Y-%m-%d') + "T" + end_time + ':00'
         event_to_push = {
             'summary' : event.subject,
             'location' : event.location,

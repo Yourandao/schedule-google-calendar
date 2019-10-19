@@ -2,9 +2,9 @@ import os
 import re
 import xlrd
 import math
-import event_object as event
+import components.event_object as event
 
-from date_provider import DateProvider
+from components.date_provider import DateProvider
 
 EXCEL_HEADER_SCRAP = 3
 EXCEL_DAY_LENGTH = 12
@@ -27,44 +27,47 @@ class ExcelWorker:
         return self.worksheet.cell(i_index - 1, j_index - 1).value
 
     def get_normalized_cell_data(self, i_index : int, j_index : int) -> [str]:
-        cell_data = str(self.get_cell(i_index, j_index))
+        cell_data = str(self.get_cell(i_index, j_index)).strip()
         result = re.findall(r'[\d,]*\d*\s*[н]*\s*[\D\s]*', cell_data, flags= re.IGNORECASE | re.DOTALL)
 
         return [item.strip() for item in result if item is not '']
 
     def get_row(self, column_index : int) -> [event.EventObject]:
         objects = []
-        data = self.get_normalized_cell_data(column_index, EXCEL_GROUP_COLUMN)
+        data = list(map(str.strip, self.get_normalized_cell_data(column_index, EXCEL_GROUP_COLUMN)))
 
         if any(data):
             location = self.get_cell(column_index, EXCEL_GROUP_LOC_COLUMN)
             if ExcelWorker.get_location(location) == 1:
-                location = [item.strip() for item in location.replace("В-78*", "").split("\n") if item is not '']
+                location = [item.strip() for item in re.split(r'[\n ]+', location.replace("В-78*", "")) if item is not '']
 
                 for i in range(len(data)):
                     weeks = list(map(int, re.findall(r'\d+', data[i])))
 
                     if not any(weeks):
                         if (column_index - EXCEL_HEADER_SCRAP) % 2 == 0:
-                            weeks = [i for i in range(2, 16, 2)]
+                            weeks = [i for i in range(2, 17, 2)]
                         else:
                             weeks = [i for i in range(1, 16, 2)]
 
+                    data[i] = [item for item in re.split(r'[\d,]*\d*\s*[н]\s', data[i]) if item is not ''][0]
                     for week in weeks:
                         objects.append(event.EventObject(data[i], location[i], \
                                         ExcelWorker.get_double_time(column_index), self.get_subject_kind(column_index), \
                                             DateProvider.getDateFromWeek(2019, week, ExcelWorker.get_weekday(column_index))))
             else:
+                location = str(int(location) if str(location).isdigit() else str(location))
                 location = location.split("\n")
                 for i in range(len(data)):
                     weeks = list(map(int, re.findall(r'\d+', data[i])))
 
                     if not any(weeks):
                         if (column_index - EXCEL_HEADER_SCRAP) % 2 == 0:
-                            weeks = [i for i in range(2, 16, 2)]
+                            weeks = [i for i in range(2, 17, 2)]
                         else:
                             weeks = [i for i in range(1, 16, 2)]
 
+                    data[i] = [item for item in re.split(r'[\d,]*\d*\s*[н]\s', data[i]) if item is not ''][0]
                     for week in weeks:
                         objects.append(event.EventObject(data[i], location[i], \
                                         ExcelWorker.get_double_time(column_index), self.get_subject_kind(column_index), \
@@ -76,13 +79,14 @@ class ExcelWorker:
         kind = self.get_cell(column_index, EXCEL_GROUP_SUBJECT_KIND_COLUMN)
 
         if ExcelWorker.get_location(self.get_cell(column_index, EXCEL_GROUP_LOC_COLUMN)) == 1:
-            return 3 if kind == "лаб" else 9
+            return 3 if kind == "лаб" or kind == "лб" else 9
         else:
-            return 4 if kind == "лаб" else 11
+            return 4 if kind == "лаб" or kind == "лб" else 11
 
     @staticmethod
     def get_location(cl : str) -> int:
-        return 1  if "В-78*" in cl else 0
+        cl = str(cl)
+        return 1 if "В-78*" in cl else 0
         
     @staticmethod
     def get_double_number(column_index : int) -> int:
@@ -98,7 +102,3 @@ class ExcelWorker:
     @staticmethod
     def get_double_time(column_index : int) -> str:
         return EXCEL_TIMES[ExcelWorker.get_double_number(column_index) - 1]
-
-worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
-
-print(worker.get_row(17)[0].date) # test
