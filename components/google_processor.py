@@ -1,5 +1,8 @@
 import pickle
-import os.path
+import os
+
+from components.event_object import EventObject
+from components.excel_worker import ExcelWorker, EXCEL_HEADER_SCRAP
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -31,10 +34,22 @@ class GoogleProcessor:
 
         self.service = build('calendar', 'v3', credentials = self.__creds)
 
-    def push_to_google_calendar(self, summary : str, location : str, start : str, end : str):
+    def parse_and_push(self):
+        all_doubles = 6 * 12
+        worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
+
+        for i in range(EXCEL_HEADER_SCRAP, all_doubles + EXCEL_HEADER_SCRAP, 1):
+            row = worker.get_row(i)
+
+            for event in row:
+                self.push_to_google_calendar(event)
+
+    def push_to_google_calendar(self, event : EventObject):
+        start_time, end_time = event.time.split('-')
+
         event_to_push = {
-            'summary' : summary,
-            'location' : location,
+            'summary' : event.subject,
+            'location' : event.location,
             'start' : {
                 'dateTime' : start,
                 'timeZone' : 'Europe/Moscow'
@@ -42,7 +57,8 @@ class GoogleProcessor:
             'end' : {
                 'dateTime' : end,
                 'timeZone' : 'Europe/Moscow'
-            }
+            },
+            'colorId' : event.color
         }
 
         self.service.events().insert(calendarId = 'primary', body=event_to_push).execute()

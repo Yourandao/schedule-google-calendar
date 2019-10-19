@@ -1,5 +1,5 @@
 from flask import Flask
-from modules.controller import Controller
+from components.controller import Controller
 
 flask_app = Flask(__name__)
 
