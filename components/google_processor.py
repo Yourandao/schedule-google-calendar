@@ -14,21 +14,21 @@ class GoogleProcessor:
         self.__creds  = None
         self.service  = None
 
-        if os.path.exists(f'files\\users\\{client_name}'):
-            if os.path.exists(f'files\\users\\{client_name}\\token.pickle'):
-                with open(f'files\\users\\{client_name}\\token.pickle', 'rb') as token:
+        if os.path.exists(f'./files\\users\\{client_name}'):
+            if os.path.exists(f'./files\\users\\{client_name}\\token.pickle'):
+                with open(f'./files\\users\\{client_name}\\token.pickle', 'rb') as token:
                     self.__creds = pickle.load(token)
         else:
-            os.mkdir(f'files\\users\\{client_name}')
+            os.mkdir(f'./files\\users\\{client_name}')
 
         if not self.__creds or not self.__creds.valid:
             if self.__creds and self.__creds.expired and self.__creds.refresh_token:
                 self.__creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(os.path.join(os.getcwd(), f'files\\creds\\credentials.json'), [self.__scopes[1]])
+                flow = InstalledAppFlow.from_client_secrets_file(f'./files\\creds\\credentials.json', [self.__scopes[1]])
                 self.__creds = flow.run_local_server(port=0)
 
-            with open(f'files\\users\\{client_name}\\token.pickle', 'wb') as token:
+            with open(f'./files\\users\\{client_name}\\token.pickle', 'wb') as token:
                 pickle.dump(self.__creds, token)
 
 

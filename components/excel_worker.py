@@ -20,7 +20,7 @@ def normal_round(n):
 
 class ExcelWorker:
     def __init__(self, filename : str):
-        self.workbook = xlrd.open_workbook(os.path.join(os.getcwd(), f'files\\data\\{filename}'))
+        self.workbook = xlrd.open_workbook(f'files\\data\\{filename}')
         self.worksheet = self.workbook.sheet_by_index(0)
     
     def get_cell(self, i_index : int, j_index : int) -> str:

@@ -4,8 +4,8 @@ class Controller:
     def home(self):
         return 'murr'
 
-    def parse(self):
-        proc = GoogleProcessor('ilya')
+    def parse(self, name):
+        proc = GoogleProcessor(name)
         proc.parse_and_push()
 
-        return 'pozhaluista'
+        return 'OK'
