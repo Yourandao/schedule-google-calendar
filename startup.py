@@ -9,4 +9,4 @@ flask_app.add_url_rule('/', 'index', lambda: controller.home())
 flask_app.add_url_rule('/calendar/<name>', 'parsed', lambda name: controller.parse(name))
 
 if __name__ == '__main__':
-    flask_app.run(port=5001)
+    flask_app.run(threaded=True, port=5001)
