@@ -38,7 +38,7 @@ class GoogleProcessor:
         all_doubles = 6 * 12
         worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
 
-        for i in range(EXCEL_HEADER_SCRAP + 1, all_doubles + EXCEL_HEADER_SCRAP, 1):
+        for i in range(EXCEL_HEADER_SCRAP + 54, all_doubles + EXCEL_HEADER_SCRAP, 1):
             row = worker.get_row(i)
 
             for event in row:
@@ -62,4 +62,4 @@ class GoogleProcessor:
             'colorId' : event.color
         }
 
-        self.service.events().insert(calendarId = 'primary', body=event_to_push).execute()
+        self.service.events().insert(calendarId = 'cdv7ihf7p3qro5fto5ve4rp47s@group.calendar.google.com', body=event_to_push).execute()
