@@ -52,9 +52,9 @@ class ExcelWorker:
 
                     data[i] = [item for item in re.split(r'[\d,]*\d*\s*[н]\s', data[i]) if item is not ''][0]
                     for week in weeks:
-                        objects.append(event.EventObject(data[i], location[i], \
+                        objects.append(event.EventObject(data[i], location[0], \
                                         ExcelWorker.get_double_time(column_index), self.get_subject_kind(column_index), \
-                                            DateProvider.getDateFromWeek(2019, week, ExcelWorker.get_weekday(column_index))))
+                                            DateProvider.getDateFromWeek(2020, week, ExcelWorker.get_weekday(column_index))))
             else:
                 location = str(int(location) if str(location).isdigit() else str(location))
                 location = location.split("\n")
@@ -71,7 +71,7 @@ class ExcelWorker:
                     for week in weeks:
                         objects.append(event.EventObject(data[i], location[i], \
                                         ExcelWorker.get_double_time(column_index), self.get_subject_kind(column_index), \
-                                            DateProvider.getDateFromWeek(2019, week, ExcelWorker.get_weekday(column_index))))
+                                            DateProvider.getDateFromWeek(2020, week, ExcelWorker.get_weekday(column_index))))
 
         return objects
 

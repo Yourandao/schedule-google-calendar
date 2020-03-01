@@ -11,4 +11,4 @@ flask_app.add_url_rule('/calendar/<name>', 'parsed', lambda name: controller.par
 
 if __name__ == '__main__':
     print('starting server', file=sys.stderr)
-    flask_app.run(debug=False, host='0.0.0.0')
+    flask_app.run(debug=False, host='localhost')

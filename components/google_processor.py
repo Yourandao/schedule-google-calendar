@@ -34,15 +34,20 @@ class GoogleProcessor:
 
         self.service = build('calendar', 'v3', credentials = self.__creds)
 
-    def parse_and_push(self):
+    @staticmethod
+    def parse_and_push():
         all_doubles = 6 * 12
-        worker = ExcelWorker('KBiSP-3-kurs-1-sem.xlsx')
+        worker = ExcelWorker('KBiSP-3-kurs-2-sem.xlsx')
 
-        for i in range(EXCEL_HEADER_SCRAP + 54, all_doubles + EXCEL_HEADER_SCRAP, 1):
+        for i in range(EXCEL_HEADER_SCRAP + 1, all_doubles + EXCEL_HEADER_SCRAP, 1):
             row = worker.get_row(i)
 
             for event in row:
-                self.push_to_google_calendar(event)
+                if event.subject.lower() == "военная кафедра":
+                    continue
+
+                print(event.subject + " " + event.location + " " + event.time + " " + event.date.strftime('%Y-%m-%d'))
+                #self.push_to_google_calendar(event)
 
     def push_to_google_calendar(self, event : EventObject):
         start_time, end_time = event.time.split('-')

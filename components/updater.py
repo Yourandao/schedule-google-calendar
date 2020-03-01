@@ -6,7 +6,7 @@ import json
 import hashlib
 import re
 
-FILENAME = 'KBiSP-3-kurs-1-sem.xlsx'
+FILENAME = 'KBiSP-3-kurs-2-sem.xlsx'
 
 # bold red - не лабы на стромынке
 # red - лабы на стромынке
